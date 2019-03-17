@@ -1,37 +1,25 @@
-function statement(customer, movies) {
-  let totalAmount = 0;
-  let frequentRenterPoints = 0;
+import Customer from './customer.es6';
+
+function statement(customerArg, movies) {
+  const customer = new Customer(customerArg, movies);
   let result = `Rental Record for ${customer.name}\n`;
   for (let r of customer.rentals) {
-    let movie = movies[r.movieID];
-    let thisAmount = 0;
-
-    switch (movie.code) {
-      case "regular":
-        thisAmount = 2;
-        if (r.days > 2) {
-          thisAmount += (r.days - 2) * 1.5;
-        }
-        break;
-      case "new":
-        thisAmount = r.days * 3;
-        break;
-      case "childrens":
-        thisAmount = 1.5;
-        if (r.days > 3) {
-          thisAmount += (r.days - 3) * 1.5;
-        }
-        break;
-    }
-
-    frequentRenterPoints++;
-    if (movie.code === "new" && r.days > 2) frequentRenterPoints++;
-
-    result += `\t${movie.title}\t${thisAmount}\n`;
-    totalAmount += thisAmount;
+    result += `\t${r.movie.title}\t${r.amount}\n`;
   }
-  result += `Amount owed is ${totalAmount}\n`;
-  result += `You earned ${frequentRenterPoints} frequent renter points\n`;
-
+  result += `Amount owed is ${customer.amount}\n`;
+  result += `You earned ${customer.frequentRenterPoints} frequent renter points\n`;
   return result;
 }
+  function htmlStatement(customerArg, movies) {
+    const customer = new Customer(customerArg, movies);
+    let result = `<h1>Rental Record for <em>${customer.name}</em></h1>\n`;
+    result += "<table>\n";
+    for (let r of customer.rentals) {
+      result += `  <tr><td>${r.movie.title}</td><td>${r.amount}</td></tr>\n`;
+    }
+    result += "</table>\n";
+    result += `<p>Amount owed is <em>${customer.amount}</em></p>\n`;
+    result += `<p>You earned <em>${customer.frequentRenterPoints}</em> frequent renter points</p>\n`;
+    return result;
+  }
+export {statement, htmlStatement};
