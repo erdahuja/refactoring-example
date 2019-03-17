@@ -1,37 +1,27 @@
-function statement(customer, movies) {
-  let totalAmount = 0;
-  let frequentRenterPoints = 0;
-  let result = `Rental Record for ${customer.name}\n`;
-  for (let r of customer.rentals) {
-    let movie = movies[r.movieID];
-    let thisAmount = 0;
+import createStatementData from './createStatementData.es6';
 
-    switch (movie.code) {
-      case "regular":
-        thisAmount = 2;
-        if (r.days > 2) {
-          thisAmount += (r.days - 2) * 1.5;
-        }
-        break;
-      case "new":
-        thisAmount = r.days * 3;
-        break;
-      case "childrens":
-        thisAmount = 1.5;
-        if (r.days > 3) {
-          thisAmount += (r.days - 3) * 1.5;
-        }
-        break;
-    }
-
-    frequentRenterPoints++;
-    if (movie.code === "new" && r.days > 2) frequentRenterPoints++;
-
-    result += `\t${movie.title}\t${thisAmount}\n`;
-    totalAmount += thisAmount;
+function htmlStatement(customer, movies) {
+  const data = createStatementData(customer, movies);
+  let result = `<h1>Rental Record for <em>${data.name}</em></h1>\n`;
+  result += "<table>\n";
+  for (let r of data.rentals) {
+    result += `  <tr><td>${r.title}</td><td>${r.amount}</td></tr>\n`;
   }
-  result += `Amount owed is ${totalAmount}\n`;
-  result += `You earned ${frequentRenterPoints} frequent renter points\n`;
-
+  result += "</table>\n";
+  result += `<p>Amount owed is <em>${data.totalAmount}</em></p>\n`;
+  result += `<p>You earned <em>${data.totalFrequentRenterPoints}</em> frequent renter points</p>\n`;
   return result;
 }
+
+function statement(customer, movies) {
+  const data = createStatementData(customer, movies);
+  let result = `Rental Record for ${data.name}\n`;
+  for (let r of data.rentals) {
+    result += `\t${r.title}\t${r.amount}\n`;
+  }
+  result += `Amount owed is ${data.totalAmount}\n`;
+  result += `You earned ${data.totalFrequentRenterPoints} frequent renter points\n`;
+  return result;
+}
+
+export default {statement, htmlStatement};
